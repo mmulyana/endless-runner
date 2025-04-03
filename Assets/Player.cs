@@ -59,6 +59,10 @@ public class Player : MonoBehaviour
     private bool canGrabLedge = true;
     private bool canClimb;
 
+    [Header("Knockback Info")]
+    [SerializeField] private Vector2 knockbackDir;
+    private bool isKnockback;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -74,10 +78,21 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CheckCollision();
         CheckAnimation();
 
         slideTimerCounter -= Time.deltaTime;
         slideCooldownCounter -= Time.deltaTime;
+
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            KnockBack();
+        }
+
+        if(isKnockback)
+        {
+            return;
+        }
 
         if (isGrounded)
         {
@@ -89,13 +104,20 @@ public class Player : MonoBehaviour
             PlayerMove();
         }
 
-        CheckCollision();
         CheckForSlide();
         CheckInput();
         CheckForLedge();
         SpeedController();
     }
 
+    private void KnockBack()
+    {
+        isKnockback = true;
+        rb.linearVelocity = knockbackDir;
+    }
+
+    private void CancelKnockBack() => isKnockback = false;
+    
     private void SpeedReset()
     {
         moveSpeed = defaultSpeed;
@@ -128,6 +150,7 @@ public class Player : MonoBehaviour
         if(ledgeDetected && canGrabLedge)
         {
             canGrabLedge = false;
+            rb.gravityScale = 0;
 
             Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
             climbBeginPosition = ledgePosition + offset1;
@@ -171,6 +194,8 @@ public class Player : MonoBehaviour
     private void LedgeClimbOver()
     {
         canClimb = false;
+        rb.gravityScale = 5;
+
         transform.position = climbOverPosition;
         Invoke("AllowedLedgeGrab", .1f);
     }
@@ -195,7 +220,15 @@ public class Player : MonoBehaviour
         anim.SetFloat("xVelocity", rb.linearVelocityX);
         anim.SetBool("isSliding", isSliding);
         anim.SetBool("canClimb", canClimb);
+        anim.SetBool("isKnocked", isKnockback);
+
+        if(rb.linearVelocityY < -20)
+        {
+            anim.SetBool("canRoll", true);
+        }
     }
+
+    private void RollAnimFinished() => anim.SetBool("canRoll", false);
 
     private void PlayerMove()
     {
