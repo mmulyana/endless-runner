@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,17 +23,32 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private Transform wallCheck;
     [SerializeField] Vector2 wallCheckSize;
+    [SerializeField] private float ceillingCheckDistance;
+    private bool ceillingDetected;
+
+    public bool ledgeDetected;
+
 
     private bool isGrounded;
     public bool wallDetected;
 
-    [Header("SLide Info")]
+    [Header("Slide Info")]
     [SerializeField] private float slideSpeed;
     [SerializeField] private float slideTimer;
     [SerializeField] private float slideCooldown;
     private float slideCooldownCounter;
     private float slideTimerCounter;
     private bool isSliding;
+
+    [Header("Ledge Info")]
+    [SerializeField] private Vector2 offset1;
+    [SerializeField] private Vector2 offset2;
+
+    private Vector2 climbBeginPosition;
+    private Vector2 climbOverPosition;
+
+    private bool canGrabLedge = true;
+    private bool canClimb;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -53,12 +70,34 @@ public class Player : MonoBehaviour
             doubleJump = true;
         }
 
-        if (runBegin && !wallDetected)
+        if (runBegin && !wallDetected || isSliding)
         {
             PlayerMove();
         }
 
+        CheckCollision();
+        CheckForSlide();
         CheckInput();
+        CheckForLedge();
+    }
+
+    private void CheckForLedge()
+    {
+        if(ledgeDetected && canGrabLedge)
+        {
+            canGrabLedge = false;
+
+            Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
+            climbBeginPosition = ledgePosition + offset1;
+            climbOverPosition = ledgePosition + offset2;
+
+            canClimb = true;
+        }
+
+        if(canClimb)
+        {
+            transform.position = climbBeginPosition;
+        }
     }
 
     private void CheckInput()
@@ -77,18 +116,24 @@ public class Player : MonoBehaviour
         {
             SlideMove();
         }
-
-        CheckCollision();
-        CheckForSlide();
     }
 
     private void CheckForSlide()
     {
-        if(slideTimerCounter < 0)
+        if(slideTimerCounter < 0 && !ceillingDetected )
         {
             isSliding = false;
         }
     }
+
+    private void LedgeClimbOver()
+    {
+        canClimb = false;
+        transform.position = climbOverPosition;
+        Invoke("AllowedLedgeGrab", .1f);
+    }
+
+    private void AllowedLedgeGrab() => canGrabLedge = true;
 
     private void SlideMove()
     {
@@ -107,7 +152,7 @@ public class Player : MonoBehaviour
         anim.SetFloat("yVelocity", rb.linearVelocityY);
         anim.SetFloat("xVelocity", rb.linearVelocityX);
         anim.SetBool("isSliding", isSliding);
-
+        anim.SetBool("canClimb", canClimb);
     }
 
     private void PlayerMove()
@@ -123,11 +168,17 @@ public class Player : MonoBehaviour
     private void CheckCollision()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
-        wallDetected = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, whatIsGround);
+        wallDetected = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, whatIsGround);
+        ceillingDetected = Physics2D.Raycast(transform.position, Vector2.up, ceillingCheckDistance, whatIsGround);
     }
 
     private void playerJump()
     {
+        if(isSliding)
+        {
+            return;
+        }
+
         if(isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
@@ -142,5 +193,7 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x,transform.position.y - groundCheckDistance));
 
         Gizmos.DrawWireCube(wallCheck.position, wallCheckSize);
+
+        Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y + ceillingCheckDistance));
     }
 }
