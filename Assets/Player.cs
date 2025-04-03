@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class Player : MonoBehaviour
 {
     public Rigidbody2D rb;
     public Animator anim;
+    private SpriteRenderer sr;
+
 
     public bool playerUnlocked;
 
@@ -62,13 +65,17 @@ public class Player : MonoBehaviour
     [Header("Knockback Info")]
     [SerializeField] private Vector2 knockbackDir;
     private bool isKnockback;
+    private bool canBeKnocked = true;
 
+    // Dead
+    private bool isDead;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        sr = GetComponent<SpriteRenderer>();
 
         speedMilestone = milestoneIncreaser;
         defaultSpeed = moveSpeed;
@@ -84,12 +91,7 @@ public class Player : MonoBehaviour
         slideTimerCounter -= Time.deltaTime;
         slideCooldownCounter -= Time.deltaTime;
 
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            KnockBack();
-        }
-
-        if(isKnockback)
+        if(isKnockback || isDead)
         {
             return;
         }
@@ -110,8 +112,46 @@ public class Player : MonoBehaviour
         SpeedController();
     }
 
+    private IEnumerator Die()
+    {
+        isDead = true;
+        canBeKnocked = false;
+        rb.linearVelocity = knockbackDir;
+        anim.SetBool("isDead", true);
+
+        yield return new WaitForSeconds(.5f);
+        rb.linearVelocity = new Vector2(0, 0);
+    }
+
+    private IEnumerator Invicibility()
+    {
+        Color originalColor = sr.color;
+        Color darkenColor = new Color(sr.color.r, sr.color.g, sr.color.b, .5f);
+
+        canBeKnocked = false;
+
+        sr.color = darkenColor;
+        yield return new WaitForSeconds(.1f);
+
+        sr.color = originalColor;
+        yield return new WaitForSeconds(.1f);
+
+        sr.color = darkenColor;
+        yield return new WaitForSeconds(.1f);
+
+        sr.color = originalColor;
+        yield return new WaitForSeconds(.1f);
+        canBeKnocked = true;
+    }
+
     private void KnockBack()
     {
+        if(!canBeKnocked)
+        {
+            return;
+        }
+
+        StartCoroutine(Invicibility());
         isKnockback = true;
         rb.linearVelocity = knockbackDir;
     }
@@ -180,6 +220,16 @@ public class Player : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {
             SlideMove();
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) && !isDead)
+        {
+            StartCoroutine(Die());
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            KnockBack();
         }
     }
 
