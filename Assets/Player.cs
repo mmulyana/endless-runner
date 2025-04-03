@@ -25,6 +25,14 @@ public class Player : MonoBehaviour
     private bool isGrounded;
     public bool wallDetected;
 
+    [Header("SLide Info")]
+    [SerializeField] private float slideSpeed;
+    [SerializeField] private float slideTimer;
+    [SerializeField] private float slideCooldown;
+    private float slideCooldownCounter;
+    private float slideTimerCounter;
+    private bool isSliding;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -37,6 +45,9 @@ public class Player : MonoBehaviour
     {
         CheckAnimation();
 
+        slideTimerCounter -= Time.deltaTime;
+        slideCooldownCounter -= Time.deltaTime;
+
         if (isGrounded)
         {
             doubleJump = true;
@@ -47,16 +58,45 @@ public class Player : MonoBehaviour
             PlayerMove();
         }
 
+        CheckInput();
+    }
+
+    private void CheckInput()
+    {
         if (Input.GetKeyDown(KeyCode.Return))
         {
             runBegin = true;
         }
 
-        CheckCollision();
-
         if (Input.GetKeyDown(KeyCode.Space))
         {
             playerJump();
+        }
+
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            SlideMove();
+        }
+
+        CheckCollision();
+        CheckForSlide();
+    }
+
+    private void CheckForSlide()
+    {
+        if(slideTimerCounter < 0)
+        {
+            isSliding = false;
+        }
+    }
+
+    private void SlideMove()
+    {
+        if(rb.linearVelocityX != 0 && slideCooldownCounter < 0)
+        {
+            isSliding = true;
+            slideTimerCounter = slideTimer;
+            slideCooldownCounter = slideCooldown;
         }
     }
 
@@ -66,10 +106,17 @@ public class Player : MonoBehaviour
         anim.SetBool("isGrounded", isGrounded);
         anim.SetFloat("yVelocity", rb.linearVelocityY);
         anim.SetFloat("xVelocity", rb.linearVelocityX);
+        anim.SetBool("isSliding", isSliding);
+
     }
 
     private void PlayerMove()
     {
+        if(isSliding)
+        {
+            rb.linearVelocity = new Vector2(slideSpeed, rb.linearVelocityY);
+            return;
+        }
         rb.linearVelocity = new Vector2(moveSpeed, rb.linearVelocityY);
     }
 
