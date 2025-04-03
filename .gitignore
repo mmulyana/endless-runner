@@ -1,0 +1,82 @@
+# File .gitignore untuk Proyek Unity
+
+# File yang dihasilkan Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# File proyek Unity
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# File build
+*.apk
+*.aab
+*.unitypackage
+*.app
+*.exe
+
+# File Asset Cache
+*.pidb.meta
+AssetStoreTools*
+
+# File auto-generated
+.vs/
+.gradle/
+Export/
+
+# File OS
+.DS_Store*
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# File Visual Studio
+*.VC.db
+*.VC.opendb
+
+# File Rider
+.idea/
+*.idea/
+*.sln.iml
+
+# File VSCode
+.vscode/
+
+# File Android
+android/
+iOS/
+
+# File dari package manager
+**/Assets/Plugins/Android
+**/Assets/Plugins/iOS
+
+/[Pp]ackages/*/
+!/Packages/manifest.json
+!/Packages/packages-lock.json
+
+# File dari Node.js
+node_modules/
+
+# File dari npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# File dari testing
+/[Ee]xported[Oo]bj/
+
+# File dari cache
+/.cache/
