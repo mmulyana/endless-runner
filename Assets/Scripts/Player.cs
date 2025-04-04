@@ -112,6 +112,18 @@ public class Player : MonoBehaviour
         SpeedController();
     }
 
+    public void Damage()
+    {
+        if(moveSpeed >= maxSpeed)
+        {
+            KnockBack();
+        } else
+        {
+            StartCoroutine(Die());
+        }
+    }
+
+    #region Die
     private IEnumerator Die()
     {
         isDead = true;
@@ -143,7 +155,9 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(.1f);
         canBeKnocked = true;
     }
+    #endregion Die
 
+    #region Knockback
     private void KnockBack()
     {
         if(!canBeKnocked)
@@ -157,7 +171,9 @@ public class Player : MonoBehaviour
     }
 
     private void CancelKnockBack() => isKnockback = false;
-    
+    #endregion Knockback
+
+    #region Speed
     private void SpeedReset()
     {
         moveSpeed = defaultSpeed;
@@ -184,7 +200,9 @@ public class Player : MonoBehaviour
             }
         }
     }
+    #endregion Speed
 
+    #region Ledge
     private void CheckForLedge()
     {
         if(ledgeDetected && canGrabLedge)
@@ -205,42 +223,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void CheckInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            runBegin = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            playerJump();
-        }
-
-        if(Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            SlideMove();
-        }
-
-        if (Input.GetKeyDown(KeyCode.D) && !isDead)
-        {
-            StartCoroutine(Die());
-        }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            KnockBack();
-        }
-    }
-
-    private void CheckForSlide()
-    {
-        if(slideTimerCounter < 0 && !ceillingDetected )
-        {
-            isSliding = false;
-        }
-    }
-
     private void LedgeClimbOver()
     {
         canClimb = false;
@@ -251,6 +233,16 @@ public class Player : MonoBehaviour
     }
 
     private void AllowedLedgeGrab() => canGrabLedge = true;
+    #endregion Ledge
+
+    #region Slide
+    private void CheckForSlide()
+    {
+        if(slideTimerCounter < 0 && !ceillingDetected )
+        {
+            isSliding = false;
+        }
+    }
 
     private void SlideMove()
     {
@@ -261,7 +253,9 @@ public class Player : MonoBehaviour
             slideCooldownCounter = slideCooldown;
         }
     }
+    #endregion Slide
 
+    #region Animation
     private void CheckAnimation()
     {
         anim.SetBool("canDoubleJump", doubleJump);
@@ -279,6 +273,7 @@ public class Player : MonoBehaviour
     }
 
     private void RollAnimFinished() => anim.SetBool("canRoll", false);
+    #endregion Animation
 
     private void PlayerMove()
     {
@@ -295,6 +290,24 @@ public class Player : MonoBehaviour
         rb.linearVelocity = new Vector2(moveSpeed, rb.linearVelocityY);
     }
 
+    private void playerJump()
+    {
+        if (isSliding)
+        {
+            return;
+        }
+
+        if (isGrounded)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+        }
+        else if (doubleJump)
+        {
+            doubleJump = false;
+            rb.linearVelocity = new Vector2(rb.linearVelocityX, doubleJoumForce);
+        }
+    }
+
     private void CheckCollision()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
@@ -302,20 +315,31 @@ public class Player : MonoBehaviour
         ceillingDetected = Physics2D.Raycast(transform.position, Vector2.up, ceillingCheckDistance, whatIsGround);
     }
 
-    private void playerJump()
+    private void CheckInput()
     {
-        if(isSliding)
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            return;
+            runBegin = true;
         }
 
-        if(isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
-        } else if(doubleJump)
+            playerJump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            doubleJump = false;
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, doubleJoumForce);
+            SlideMove();
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) && !isDead)
+        {
+            StartCoroutine(Die());
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            KnockBack();
         }
     }
 

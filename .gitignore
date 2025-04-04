@@ -1,4 +1,5 @@
-# File .gitignore untuk Proyek Unity
+# File konfigurasi Visual Studio
+.vsconfig
 
 # File yang dihasilkan Unity
 /[Ll]ibrary/
@@ -55,7 +56,7 @@ Thumbs.db
 # File VSCode
 .vscode/
 
-# File Android
+# File Android dan iOS
 android/
 iOS/
 
