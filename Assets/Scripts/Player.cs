@@ -317,10 +317,10 @@ public class Player : MonoBehaviour
 
     private void CheckInput()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            runBegin = true;
-        }
+        //if (Input.GetKeyDown(KeyCode.Return))
+        //{
+        //    runBegin = true;
+        //}
 
         if (Input.GetKeyDown(KeyCode.Space))
         {

@@ -2058,6 +2058,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2824585953268525853}
     m_Modifications:
+    - target: {fileID: 2605598759341633426, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
+      propertyPath: maxCoins
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605598759341633426, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
+      propertyPath: changeToSpawn
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 5698843432890986795, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 48.3546
@@ -2120,13 +2128,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2824585953268525853}
     m_Modifications:
+    - target: {fileID: 2605598759341633426, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
+      propertyPath: maxCoins
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605598759341633426, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
+      propertyPath: changeToSpawn
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5698843432890986795, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 40.33142
       objectReference: {fileID: 0}
     - target: {fileID: 5698843432890986795, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.208676
+      value: 9.8
       objectReference: {fileID: 0}
     - target: {fileID: 5698843432890986795, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2182,6 +2198,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2824585953268525853}
     m_Modifications:
+    - target: {fileID: 2605598759341633426, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
+      propertyPath: maxCoins
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605598759341633426, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
+      propertyPath: changeToSpawn
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5698843432890986795, guid: 34c5fb5460a83d143b06555bf08351eb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 26.61601
