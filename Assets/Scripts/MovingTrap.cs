@@ -8,6 +8,11 @@ public class MovingTrap : Trap
 
     private int i = 0;
 
+    protected override void Start()
+    {
+        base.Start();
+    }
+
     private void Update()
     {
         transform.position = Vector2.MoveTowards(transform.position, movePosition[i].position, speed * Time.deltaTime);

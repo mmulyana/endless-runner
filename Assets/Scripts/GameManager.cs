@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 
     public int coins;
 
+    
+
     private void Awake()
     {
         instance = this;
