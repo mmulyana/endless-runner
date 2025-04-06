@@ -131,8 +131,12 @@ public class Player : MonoBehaviour
         rb.linearVelocity = knockbackDir;
         anim.SetBool("isDead", true);
 
+
         yield return new WaitForSeconds(.5f);
         rb.linearVelocity = new Vector2(0, 0);
+
+        yield return new WaitForSeconds(.5f);
+        GameManager.instance.EndGame();
     }
 
     private IEnumerator Invicibility()

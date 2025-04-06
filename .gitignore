@@ -81,3 +81,6 @@ yarn-error.log*
 
 # File dari cache
 /.cache/
+
+/Assets/Dark UI
+/Assets/HardArtcore
