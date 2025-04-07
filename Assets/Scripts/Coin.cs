@@ -12,6 +12,7 @@ public class coins : MonoBehaviour
 
         if(collision.GetComponent<Player>() != null)
         {
+            AudioManager.instance.PlaySFX(1);
             GameManager.instance.coins++;
             Destroy(gameObject);
         }

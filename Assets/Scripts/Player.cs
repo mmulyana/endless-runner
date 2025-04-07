@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -130,6 +131,7 @@ public class Player : MonoBehaviour
         canBeKnocked = false;
         rb.linearVelocity = knockbackDir;
         anim.SetBool("isDead", true);
+        AudioManager.instance.PlaySFX(9);
 
 
         yield return new WaitForSeconds(.5f);
@@ -248,10 +250,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SlideMove()
+    public void PlayerSlide()
     {
         if(rb.linearVelocityX != 0 && slideCooldownCounter < 0)
         {
+            AudioManager.instance.PlaySFX(4);
             isSliding = true;
             slideTimerCounter = slideTimer;
             slideCooldownCounter = slideCooldown;
@@ -294,7 +297,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = new Vector2(moveSpeed, rb.linearVelocityY);
     }
 
-    private void playerJump()
+    public void playerJump()
     {
         if (isSliding)
         {
@@ -303,10 +306,12 @@ public class Player : MonoBehaviour
 
         if (isGrounded)
         {
+            AudioManager.instance.PlaySFX(5);
             rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
         }
         else if (doubleJump)
         {
+            AudioManager.instance.PlaySFX(6);
             doubleJump = false;
             rb.linearVelocity = new Vector2(rb.linearVelocityX, doubleJoumForce);
         }
@@ -333,18 +338,18 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            SlideMove();
+            PlayerSlide();
         }
 
-        if (Input.GetKeyDown(KeyCode.D) && !isDead)
-        {
-            StartCoroutine(Die());
-        }
+        //if (Input.GetKeyDown(KeyCode.D) && !isDead)
+        //{
+        //    StartCoroutine(Die());
+        //}
 
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            KnockBack();
-        }
+        //if (Input.GetKeyDown(KeyCode.K))
+        //{
+        //    KnockBack();
+        //}
     }
 
     private void OnDrawGizmos() {

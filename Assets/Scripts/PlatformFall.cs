@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlatformFall : MonoBehaviour
@@ -13,7 +14,14 @@ public class PlatformFall : MonoBehaviour
     {
         if(collision.GetComponent<Player>() != null)
         {
-            rb.gravityScale = 5;
+            StartCoroutine(fall());
         }
+    }
+
+
+    private IEnumerator fall()
+    {
+        yield return new WaitForSeconds(1f);
+        rb.gravityScale = 5;
     }
 }
